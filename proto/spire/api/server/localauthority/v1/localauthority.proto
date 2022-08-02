@@ -1,6 +1,6 @@
 syntax = "proto3";
-package spire.api.server.local_authority.v1;
-option go_package = "github.com/spiffe/spire-api-sdk/proto/spire/api/server/local_authority/v1;local_authorityv1";
+package spire.api.server.localauthority.v1;
+option go_package = "github.com/spiffe/spire-api-sdk/proto/spire/api/server/localauthority/v1;localauthorityv1";
 
 // The LocalAuthority service provides a way to manage the signing keys (and
 // related material) of the SPIRE Server exposing it.
@@ -40,6 +40,12 @@ service LocalAuthority {
         // error will be returned.
         rpc RevokeJWTAuthority(RevokeJWTAuthorityRequest) returns (RevokeJWTAuthorityResponse);
 
+        // ReactivateX509Authority reactivates the previously activate JWT authority
+	//
+	// If previously active JWT authority does not exist or it should rotate,
+	// a Failed Precondition error will be returned
+        rpc ReactivateJWTAuthoriry(ReactivateJWTAuthorityRequest) returns (ReactivateJWTAuthorityResponse);
+
         // GetX509AuthorityState returns the state of all locally configured
         // X.509 authorities.
         rpc GetX509AuthorityState(GetX509AuthorityStateRequest) returns (GetX509AuthorityStateResponse);
@@ -49,7 +55,6 @@ service LocalAuthority {
         // the bundle. This action will  propagate the new CA cluster-wide.
         rpc PrepareX509Authority(PrepareX509AuthorityRequest) returns (PrepareX509AuthorityResponse);
 
-        
         // ActivateX509Authority activates a prepared X.509 authority for use,
         // which will cause it to be used for all X.509 signing operations
         // serviced by this server going forward. If a new X.509 authority has
@@ -75,6 +80,12 @@ service LocalAuthority {
         // has been prepared but not activated yet), a FailedPrecondition
         // error will be returned.
         rpc RevokeX509Authority(RevokeX509AuthorityRequest) returns (RevokeX509AuthorityResponse);
+
+        // ReactivateX509Authority reactivates the previously activate X.509 authority
+	//
+	// If previously active X.509 authority does not exist or it should rotate,
+	// a Failed Precondition error will be returned
+        rpc ReactivateX509Authoriry(ReactivateX509AuthorityRequest) returns (ReactivateX509AuthorityResponse);
 }
 
 message GetJWTAuthorityStateRequest {}
@@ -104,6 +115,12 @@ message TaintJWTAuthorityResponse {
 message RevokeJWTAuthorityRequest {}
 
 message RevokeJWTAuthorityResponse {
+        AuthorityState revoked_authority = 1;
+}
+
+message ReactivateJWTAuthorityRequest {}
+
+message ReactivateJWTAuthorityResponse {
         AuthorityState revoked_authority = 1;
 }
 
@@ -137,38 +154,34 @@ message RevokeX509AuthorityResponse {
         AuthorityState revoked_authority = 1;
 }
 
-message AuthorityState {
-        // An opaque name for the "slot" that this authority is housed in
-        string slot = 1;
+message ReactivateX509AuthorityRequest {}
 
+message ReactivateX509AuthorityResponse {
+        AuthorityState revoked_authority = 1;
+}
+
+message AuthorityState {
         // The authority's public key, PKIX encoded
-        bytes public_key = 2;
+        bytes public_key = 1;
 
         enum Status {
                 // Key status is unknown. This is an error condition and should
                 // never really be encountered.
                 UNKNOWN = 0;
 
-                // This slot is empty. To fill it, prepare a new authority.
-                EMPTY = 1;
-
                 // This is a new authority that has been added to the bundle
                 // but is not yet in use.
-                PREPARED = 2;
+                PREPARED = 1;
 
                 // This authority is active and is currently being used for
                 // signing operations.
-                ACTIVE = 3;
+                ACTIVE = 2;
 
                 // This is an old authority that was previously in use but is
                 // no longer.
-                OLD = 4;
-
-                // This is an old authority that was previously in use but is
-                // now expired.
-                EXPIRED = 5;
+                OLD = 3;
         }
 
         // The status of this authority
-        Status status = 3;
+        Status status = 2;
 }
