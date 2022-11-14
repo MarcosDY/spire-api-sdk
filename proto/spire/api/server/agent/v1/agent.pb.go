@@ -784,7 +784,7 @@ type PushStatusRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// Required. Serial number of the bundle used to sign Agent identinty.
+	// Required. Serial number of the bundle used to sign Agent identity.
 	AuthoritySerial string `protobuf:"bytes,1,opt,name=authority_serial,json=authoritySerial,proto3" json:"authority_serial,omitempty"`
 }
 

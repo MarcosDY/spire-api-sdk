@@ -24,7 +24,7 @@ message X509Certificate {
     // The ASN.1 DER encoded bytes of the X.509 certificate.
     bytes asn1 = 1;
 
-    // This authority is not longer secure and must not be used.
+    // This authority is no longer secure and must not be used.
     bool tainted = 2;
 }
 
@@ -39,7 +39,7 @@ message JWTKey {
     // not expire.
     int64 expires_at = 3;
 
-    // This authority is not longer secure and must not be used
+    // This authority is no longer secure and must not be used
     bool tainted = 4;
 }
 
